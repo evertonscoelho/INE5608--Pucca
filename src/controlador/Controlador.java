@@ -1,6 +1,8 @@
 package controlador;
 
 import inteface.JanelaInicial;
+import inteface.JanelaSelecaoIdioma;
+import internacionalizacao.Internacionalizacao;
 
 import java.util.List;
 
@@ -22,16 +24,47 @@ public class Controlador {
 	protected AtorNetGames atorNetGames;
 	protected Tabuleiro tabuleiro;
 	protected Lance lance;
+	private Internacionalizacao internacionalizacao;
 
-	public void inicie() {
+	public void inicie(String localeFile) {
+		String locale = "";
+		switch (localeFile) {
+		case "Franc\u00EAs":
+			locale = "fr_fr";
+			break;
+		case "Ingl\u00EAs":
+			locale = "en_es";
+			break;
+		case "Portugu\u00EAs":
+			locale = "pt_br";
+			break;
+		default:
+			locale = "pt_br";
+			break;
+		}
+		internacionalizacao = new Internacionalizacao(locale);
 		janelaInicial = new JanelaInicial(this);
 		tabuleiro = new Tabuleiro();
 		janelaInicial.interaja();
 		jogador = new Jogador();
 	}
 
+	public String getValue(String key) {
+		try {
+			return internacionalizacao.getTranslate(key);
+		} catch (Exception e) {
+			System.out.println("NÃ£o localizou a String no arquivo");
+		}
+		return key;
+	}
+
+	public void initIdioma() {
+		JanelaSelecaoIdioma janelaSelecaoIdioma = new JanelaSelecaoIdioma(this);
+		janelaSelecaoIdioma.setVisible(true);
+	}
+
 	public void iniciarJogo() {
-		
+
 		boolean conexao = jogador.verificaConexao();
 		if (conexao) {
 			boolean andamento = tabuleiro.emAndamento();
@@ -41,12 +74,12 @@ public class Controlador {
 				janelaInicial.aguardandoInicio();
 			} else {
 				janelaInicial
-						.mostraMensagem("Já possui uma partida em andamento");
+						.mostraMensagem(getValue("Ja possui uma partida em andamento"));
 			}
 
 		} else {
 			janelaInicial
-					.mostraMensagem("Ainda não está conectado com o servidor");
+					.mostraMensagem(getValue("Ainda nao esta conectado com o servidor"));
 		}
 
 	}
@@ -55,12 +88,12 @@ public class Controlador {
 		jogador.setNome(nome);
 		atorNetGames = new AtorNetGames(this);
 		String problema = atorNetGames.conectar(nome, "venus.inf.ufsc.br");
-		//String problema = atorNetGames.conectar(nome, "localhost");
+		// String problema = atorNetGames.conectar(nome, "localhost");
 		if (problema != null) {
 			janelaInicial.mostraMensagem(problema);
 		} else {
 			jogador.setConectado(true);
-			janelaInicial.mostraMensagem("Conectado com sucesso");
+			janelaInicial.mostraMensagem(getValue("Conectado com sucesso"));
 		}
 
 	}
@@ -89,7 +122,7 @@ public class Controlador {
 			verificaVencedor();
 		} else {
 			jogador.habilita();
-			janelaInicial.setMensagemPainel("Sua vez");
+			janelaInicial.setMensagemPainel(getValue("Sua vez"));
 		}
 	}
 
@@ -121,12 +154,12 @@ public class Controlador {
 							passarAVez(jogada);
 						} else {
 							janelaInicial
-									.mostraMensagem("Atenção, selecione uma posição válida");
+									.mostraMensagem(getValue("Atencao, selecione uma posicao valida"));
 						}
 
 					} else {
 						janelaInicial
-								.mostraMensagem("Atenção, selecione uma peça");
+								.mostraMensagem(getValue("Atencao, selecione uma peca"));
 					}
 					// Se a posicao selecionada for uma posicao do jogador,
 					// troca de
@@ -136,14 +169,14 @@ public class Controlador {
 					selecionarPeca(linha, coluna);
 				} // Se a posicao Selecionada nao for do jogaodr
 				else {
-					janelaInicial.mostraMensagem("Peça do adversário");
+					janelaInicial.mostraMensagem(getValue("Peca do adversario"));
 				}
 			} else {
-				janelaInicial.mostraMensagem("Vez do adversário");
+				janelaInicial.mostraMensagem(getValue("Vez do adversario"));
 			}
 			// Se partida nao esta em andamento
 		} else {
-			janelaInicial.mostraMensagem("Partida não está em andamento");
+			janelaInicial.mostraMensagem(getValue("Partida nao esta em andamento"));
 		}
 
 	}
@@ -165,7 +198,7 @@ public class Controlador {
 	private void passarAVez(JogadaValida jogada) {
 		jogador.desabilita();
 		atorNetGames.enviarJogada(jogada);
-		janelaInicial.setMensagemPainel("Aguardando adversário");
+		janelaInicial.setMensagemPainel(getValue("Aguardando adversario"));
 		janelaInicial.imprimeTabuleiro(tabuleiro
 				.preparaTabuleiroParaInterface());
 		janelaInicial.atualizaPontuacao(tabuleiro.getPontuacaoJogadorUm(),
@@ -182,16 +215,16 @@ public class Controlador {
 	public void iniciarPartida(int posicaoDeJogada) {
 		// Metodo para iniciar uma nova partida, onde recebe um int posicao
 		// informando quem comeca o jogo
-	//	esvaziar();
+		// esvaziar();
 		String nomeAdversario;
 		if (posicaoDeJogada == 1) {
 			jogador.habilita();
 			nomeAdversario = atorNetGames.obterNomeAdversario(2);
-			janelaInicial.setMensagemPainel("Sua vez!");
+			janelaInicial.setMensagemPainel(getValue("Sua vez!"));
 		} else {
 			jogador.desabilita();
 			nomeAdversario = atorNetGames.obterNomeAdversario(1);
-			janelaInicial.setMensagemPainel("Aguardando oponente!");
+			janelaInicial.setMensagemPainel(getValue("Aguardando oponente!"));
 		}
 
 		inicializaJogadores(nomeAdversario);
@@ -210,12 +243,12 @@ public class Controlador {
 
 	}
 
-/*	private void esvaziar() {
-		tabuleiro.retiraPecas();
-		tabuleiro.setPecaJogadorDois(null);
-		tabuleiro.zeraPontuacao();
-		
-	}*/
+	/*
+	 * private void esvaziar() { tabuleiro.retiraPecas();
+	 * tabuleiro.setPecaJogadorDois(null); tabuleiro.zeraPontuacao();
+	 * 
+	 * }
+	 */
 
 	private void inicializaJogadores(String nomeAdversario) {
 		ClassLoader cl = this.getClass().getClassLoader();
@@ -246,14 +279,14 @@ public class Controlador {
 			if (andamento) {
 				finalizaPartida();
 				janelaInicial
-						.setMensagemPainel("Partida finalizada por desconexão");
+						.setMensagemPainel(getValue("Partida finalizada por desconexao"));
 			}
 			atorNetGames.desconectar();
 			jogador.setConectado(false);
-			janelaInicial.mostraMensagem("Desconectado com sucesso");
+			janelaInicial.mostraMensagem(getValue("Desconectado com sucesso"));
 		} else {
 			janelaInicial
-					.mostraMensagem("Não está conectado a nenhum servidor");
+					.mostraMensagem(getValue("Nao esta conectado a nenhum servidor"));
 		}
 
 	}
@@ -265,13 +298,14 @@ public class Controlador {
 	public void verificaVencedor() {
 		int pontuacaoJogadorUm = tabuleiro.getPontuacaoJogadorUm();
 		int pontuacaoJogadorDois = tabuleiro.getPontuacaoJogadorDois();
-		boolean vencedor = pontuacaoJogadorDois == 0|| pontuacaoJogadorDois < pontuacaoJogadorUm;
+		boolean vencedor = pontuacaoJogadorDois == 0
+				|| pontuacaoJogadorDois < pontuacaoJogadorUm;
 		if (vencedor) {
 			jogador.setVencedor(true);
-			janelaInicial.setMensagemPainel("Você venceu");
+			janelaInicial.setMensagemPainel(getValue("Voce venceu"));
 		} else {
 			jogador.setVencedor(false);
-			janelaInicial.setMensagemPainel("Você perdeu");
+			janelaInicial.setMensagemPainel(getValue("Voce perdeu"));
 		}
 	}
 
@@ -297,11 +331,14 @@ public class Controlador {
 		}
 
 	}
-	
-	public void finalizaPartidaComErro(){
+
+	public void finalizaPartidaComErro() {
 		finalizaPartida();
-		janelaInicial
-				.setMensagemPainel("Partida finalizada por desconexão");
+		janelaInicial.setMensagemPainel(getValue("Partida finalizada por desconexao"));
+	}
+
+	public String getKeyForValue(String value) {
+		return internacionalizacao.getKeyForValue(value);
 	}
 
 }

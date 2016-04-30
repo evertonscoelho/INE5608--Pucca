@@ -10,18 +10,18 @@ public class Menu extends JMenuBar{
 	protected JMenuItem itemConectar, itemJogar, itemDesconectar, itemSair;
 
 	public Menu(JanelaInicial ji) {
-		menuJogo = new JMenu("Jogo");
+		menuJogo = new JMenu(ji.loadTranslate("Jogo"));
 		
-		itemConectar = new JMenuItem("Conectar");
+		itemConectar = new JMenuItem(ji.loadTranslate("Conectar"));
 		itemConectar.addActionListener(ji);
 		
-		itemJogar = new JMenuItem("Jogar");
+		itemJogar = new JMenuItem(ji.loadTranslate("Jogar"));
 		itemJogar.addActionListener(ji);
 		
-		itemDesconectar = new JMenuItem("Desconectar");
+		itemDesconectar = new JMenuItem(ji.loadTranslate("Desconectar"));
 		itemDesconectar.addActionListener(ji);
 		
-		itemSair = new JMenuItem("Sair");
+		itemSair = new JMenuItem(ji.loadTranslate("Sair"));
 		itemSair.addActionListener(ji);
 		
 		menuJogo.add(itemConectar);

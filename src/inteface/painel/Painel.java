@@ -1,7 +1,9 @@
 package inteface.painel;
 
 import inteface.JanelaInicial;
+
 import java.awt.Rectangle;
+
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -26,7 +28,7 @@ public class Painel extends JPanel{
 	protected JLabel tabuleiro[][] = new JLabel[7][7];
 
 	public Painel(JanelaInicial janelaInicial) {
-		setBorder(BorderFactory.createTitledBorder("Pucca"));
+		setBorder(BorderFactory.createTitledBorder(janelaInicial.loadTranslate("Pucca")));
 		setSize(150, 150);
 		this.janelaInicial = janelaInicial;
 		this.setLayout(null);
@@ -121,8 +123,9 @@ public class Painel extends JPanel{
 	}
 
 	public void aguardandoInicio() {
-		setMensagem("Aguardando adversario");
+		setMensagem(janelaInicial.loadTranslate("Aguardando adversario"));
 	}
+	
 
 	public void setDadosJogador(String jogadorUm, String jogadorDois,
 			Icon iconJogadorUmTabuleiro, Icon iconJogadorDoisTabuleiro, Icon iconJogadorUmMiniatura, Icon iconJogadorDoisMiniatura) {
@@ -138,7 +141,6 @@ public class Painel extends JPanel{
 	public void imprimeTabuleiro(int[][] tabuleiroInterface) {
 		for (int linha = 0; linha < 7; linha++) {
 			for (int coluna = 0; coluna < 7; coluna++) {
-//				System.out.print(tabuleiroInterface[linha][coluna]);
 				if(tabuleiroInterface[linha][coluna] == 0){
 					tabuleiro[linha][coluna].setIcon(vazia);
 				}else if(tabuleiroInterface[linha][coluna] == 1){

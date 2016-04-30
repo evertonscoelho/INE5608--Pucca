@@ -18,10 +18,11 @@ public class JanelaInicial extends JFrame implements ActionListener {
 	protected Menu menu;
 	
 	public JanelaInicial(Controlador controlador){
+		//Nao traduzido
 		super("Pucca");
+		this.controlador = controlador;
 		menu = new Menu(this);
 		setJMenuBar(menu);
-		this.controlador = controlador;
 		painel = new Painel(this);
 		setContentPane(painel);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -35,6 +36,10 @@ public class JanelaInicial extends JFrame implements ActionListener {
 		setVisible(true);
     }
 
+	public String loadTranslate(String key){
+		return controlador.getValue(key);
+	}
+	
 	public void conectou() {
 		painel = new Painel(this);
 		setContentPane(painel);
@@ -42,7 +47,8 @@ public class JanelaInicial extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		switch (e.getActionCommand()) {
+		String comando = getKeyForValue(e.getActionCommand());		
+		switch (comando) {
 		// Verifica qual a opcaoo do menu foi clicada
 		case "Conectar":
 			solicitaConexao();
@@ -62,6 +68,10 @@ public class JanelaInicial extends JFrame implements ActionListener {
 			break;
 
 		}
+	}
+
+	private String getKeyForValue(String value) {
+		return controlador.getKeyForValue(value);
 	}
 
 	public void solicitarDesconexao() {
@@ -84,14 +94,14 @@ public class JanelaInicial extends JFrame implements ActionListener {
 
 				controlador.conectar(nome);
 			} else {
-				mostraMensagem("Coloque um nome");
+				mostraMensagem(loadTranslate("Coloque um nome"));
 			}
 		}
 
 	}
 
 	private String solicitaNome() {
-		return JOptionPane.showInputDialog("Digite seu nome");
+		return JOptionPane.showInputDialog(loadTranslate("Digite seu nome"));
 	}
 
 	public void aguardandoInicio() {
@@ -118,7 +128,6 @@ public class JanelaInicial extends JFrame implements ActionListener {
 
 	public void posicaoClicada(int linha, int coluna) {
         controlador.posicaoClicada(linha, coluna);
-		
 	}
 
 	public void criaTabuleiro() {
